@@ -23,10 +23,11 @@ class Hist:
                f"Histr:\n{self.histr}\n" +\
                f"Histg:\n{self.histg}\n" +\
                f"Histb:\n{self.histb}\n"
-    def plot(self, fn: typing.Union[None, str]):
+    def plot(self, fn: typing.Union[None, str]=None):
         matplotlib.pyplot.clf()
         matplotlib.pyplot.bar(numpy.arange(256), self.hist)
-        matplotlib.pyplot.savefig(fn)
+        if (fn):
+            matplotlib.pyplot.savefig(fn)
 
 
 def hist(fn: str) -> Hist:
