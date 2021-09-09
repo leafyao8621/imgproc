@@ -39,9 +39,20 @@ static PyObject* hist_base(PyObject* self, PyObject* args) {
     }
 
     unsigned int hist[256], histr[256], histg[256], histb[256];
-    if (core_hist(fn, hist, histr, histg, histb)) {
-        PyErr_SetString(PyExc_RuntimeError, "Histogram failure");
-        return NULL;
+    int ret = core_hist(fn, hist, histr, histg, histb);
+    if (ret) {
+        switch (ret) {
+        case 1:
+            PyErr_SetString(PyExc_RuntimeError, "Histogram failure: NULL PTR");
+            return NULL;
+        case 2:
+            PyErr_SetString(PyExc_RuntimeError, "Histogram failure: FILE IO");
+            return NULL;
+        case 3:
+            PyErr_SetString(PyExc_RuntimeError, "Histogram failure: INVALID PNG");
+            return NULL;
+        }
+
     }
 
     if (!(out_iter = NpyIter_New((PyArrayObject*)out_array, NPY_ITER_READWRITE,

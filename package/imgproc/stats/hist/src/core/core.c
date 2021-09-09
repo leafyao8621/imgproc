@@ -40,12 +40,21 @@ int core_hist(const char* fn,
     if (!fin) {
         return 2;
     }
+
+    char header[8];
+    fread(header, 1, 8, fin);
+
+    int is_png = !png_sig_cmp(header, 0, 8);
+    if (!is_png) {
+        fclose(fin);
+        return 3;
+    }
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
     png_infop info = png_create_info_struct(png);
     png_uint_32 width, height;
     int bit_depth, color_type, interlace_type;
     png_init_io(png, fin);
-    png_set_sig_bytes(png, 0);
+    png_set_sig_bytes(png, 8);
     png_read_info(png, info);
     png_get_IHDR(png,
                  info,
